@@ -1,0 +1,92 @@
+﻿@inject HttpClient Http
+@using System.Text.Json.Serialization
+@using System.Text.Json
+
+@code {
+    private WeatherForecast forecasts = new WeatherForecast() { Weather = new Weather[1] { new Weather { Description = "loading..." } }, Rain = new Rain(), Main = new Main(), Wind = new Wind() };
+
+    public string weatherdescription = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //HttpClient Http = new HttpClient();
+        //Http.BaseAddress = new Uri("https://api.openweathermap.org/");
+        Http.DefaultRequestHeaders.Add("Accept", "application/json; charset=utf-8");
+        Http.DefaultRequestHeaders.Add("Access-Control-Request-Method","GET");
+        JsonSerializerOptions options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        //560100,In
+        string queryparams = "zip=560100,In&appid=3081a5999560aea537ad1837f5693b89&units=metric";
+        //var hackRegistrations = await Http.GetAsync("data/2.5/weather?" + queryparams);
+        //var responseStream = await hackRegistrations.Content.ReadAsStringAsync();
+        //forecasts = JsonSerializer.Deserialize<WeatherForecast>(responseStream, options);
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast>("https://api.openweathermap.org/data/2.5/weather?" + queryparams, options);
+        Console.WriteLine(forecasts);
+        weatherdescription = (forecasts.Weather[0].Description.Contains("cloud")) ? "wb_cloudy" : (forecasts.Weather[0].Description.Contains("rain")) ? "wb_shower" : "wb_sunny";
+    }
+
+    public class WeatherForecast
+    {
+        public string Name { get; set; }
+        public Rain Rain { get; set; }
+        public Main Main { get; set; }
+        public Weather[] Weather { get; set; }
+        public Wind Wind { get; set; }
+    }
+
+    public class Rain
+    {
+        [JsonPropertyName("1h")]
+        public decimal onehr { get; set; }
+    }
+
+    public class Main
+    {
+        public int Humidity { get; set; }
+        public decimal Temp { get; set; }
+        [JsonIgnore]
+        public int TempConvert { get => Convert.ToInt32(Temp); }
+    }
+
+    public class Wind
+    {
+        public decimal speed { get; set; }
+        [JsonIgnore]
+        public int speedConvert { get => Convert.ToInt32(speed); }
+    }
+
+    public class Weather
+    {
+        public string Description { get; set; }
+    }
+}
+
+@*<head>
+    </head>*@
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.css" rel="stylesheet" type="text/css">
+
+@*<body>
+    </body>*@
+<div class="container">
+    <div class="background">
+        @*<div class="Circle1"></div>
+            <div class="Circle2"></div>
+            <div class="Circle3"></div>*@
+        <div class="content">
+            <h1 class="Location"><i class="material-icons locationIcon">place</i>@forecasts.Name</h1>
+            <h3 class="Condition"><i class="material-icons sun">@weatherdescription</i>  @forecasts.Weather[0].Description</h3>
+            <h2 class="Temp">@forecasts.Main.TempConvert<span id="C">&#8451;</span></h2>
+            <h4 class="Humidity"><i class="wi wi-humidity"></i> @forecasts.Main.Humidity%</h4>
+            <h4 class="WindSpeed"><i class="wi wi-windy"></i>  @forecasts.Wind.speedConvert</h4>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+

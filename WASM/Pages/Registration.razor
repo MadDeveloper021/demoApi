@@ -1,0 +1,67 @@
+﻿@page "/Registration"
+@using HackRegistration.Models
+@using System.Net.Http
+@using System.Text.Json
+@using HackRegistration.HttpRepository
+@using HackRegistration.Pages
+@inject IJSRuntime JSRuntime
+@inject HackRegistration.Services.ToastService toastservice
+
+@code
+{
+    public List<int> selectedIds = new List<int>();
+    public string toastrMessage = "";
+
+    protected ConfirmBase DeleteConfirmation { get; set; }
+
+    protected void Delete_Click()
+    {
+        DeleteConfirmation.Show();
+    }   
+
+    //public List<Hacks> listHacks { get; set; } = new List<Hacks>();
+    private void CheckChanged(object value, int id)
+    {
+        if (Convert.ToBoolean(value))
+        {
+            selectedIds.Add(id);
+        }
+        else
+        {
+            selectedIds.Remove(id);
+        }
+
+        //Console.WriteLine(selectedIds.Count);
+    }
+}
+
+<head>
+    
+</head>
+<div class="float-right">
+    <h1><WeatherWidget /></h1>
+</div>
+<Toast></Toast>
+<div id="buttons" style="margin-right: -25.5%;margin-top: 15%;" class="float-right">
+    <button id="btnAdd" class="btn btn-primary" @onclick="NewProfile">New Profile</button>
+        @*<input type="button" id="btnDelete" @onclick="@Delete" class="btn btn-primary" value="Delete" />*@
+        <button class="btn btn-danger" @onclick="@Delete">Delete</button>
+</div>
+<Confirm @ref="DeleteConfirmation" ConfirmationChanged="ConfirmDelete_Click" />
+<div style="margin-top:20%;">
+    <Grid Items="listHacks" class="table table-bordered">
+        @*<GridColumn Title="Profile Name" TRowData="Hacks" Expression="c => c.Id" />*@
+        <GridColumn Title="Profile Name" TRowData="Hacks" Expression="c => c.ProfileName" />
+        <GridColumn Title="Email" TRowData="Hacks" Expression="c => c.EmailAddress" />
+        <GridColumn Title="Registered On" TRowData="Hacks" Expression="c => Convert.ToDateTime(c.CreatedOn).ToShortDateString()" />
+        @*<GridColumn TRowData="Hacks" Expression="c => c.Dob" Format="d" />*@
+        <GridColumn Title="Edit" TRowData="Hacks">
+            <a href="/edit/@context.Id"><u>Edit</u></a>
+        </GridColumn>
+        <GridColumn Title="Delete" TRowData="Hacks">
+            <input type="checkbox" id="@context.Id" @onchange="eventArgs => {CheckChanged(eventArgs.Value,context.Id); }" />
+        </GridColumn>
+
+
+    </Grid>
+</div>

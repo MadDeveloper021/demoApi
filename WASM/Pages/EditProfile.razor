@@ -1,0 +1,60 @@
+﻿@page "/edit/{id}"
+@inject HackRegistration.Services.ToastService toastservice
+
+@code
+{
+    //void OnSubmit(Event e)
+    //{
+    //   e.PreventDefault();
+    //} OnInvalidSubmit="@OnInvalidSubmit"
+
+}
+
+<EditForm Model="@Hacks" OnValidSubmit="eventArgs => { UpdateProfile(Hacks.Id,Hacks); }">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <Toast />
+    <div class="form-group row">
+        <div><h3>Profile</h3></div>
+
+        <div style="margin-left:75%;">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="@($"Registration")" class="btn btn-danger">Cancel</a>
+        </div>
+    </div>
+    <hr />
+    <div class="form-group row">
+        <label id="lblName" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-4">
+            <InputText id="firstName" class="form-control" placeholder="First Name" @bind-Value="Hacks.FirstName" /> <br />
+            <InputText id="lastName" class="form-control" placeholder="Last Name" @bind-Value="Hacks.LastName" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="Dob" class="col-sm-2 col-form-label">DOB</label>
+        <div class="col-sm-4">
+            <InputDate id="Dob" class="form-control" placeholder="Date of Birth" @bind-Value="Hacks.Dob" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="email" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-4">
+            <InputText id="email" class="form-control" placeholder="Email" @bind-Value="Hacks.EmailAddress" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="confirmEmail" class="col-sm-2 col-form-label">Confirm Email</label>
+        <div class="col-sm-4">
+            <InputText id="email" class="form-control" placeholder="Confirm Email" @bind-Value="Hacks.ConfirmEmailAddress" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label id="lblPhoneNumber" class="col-sm-2 col-form-label">Phone Number</label>
+        <div class="col-sm-4">
+            <InputText id="AreaCode" class="form-control-sm" placeholder="Area Code" @bind-Value="Hacks.AreaCode" />
+            <InputText id="phNumber" class="form-control-md" placeholder="Phone Number" @bind-Value="Hacks.PhoneNumber" />
+        </div>
+    </div>
+
+</EditForm>
+
